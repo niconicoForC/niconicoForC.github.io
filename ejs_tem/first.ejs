@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>星空场景</title>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.135.0/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.135.0/examples/js/controls/OrbitControls.js"></script>
+    <script>
+      // 创建场景
+      const scene = new THREE.Scene();
+
+      // 创建摄像机
+      const camera = new THREE.PerspectiveCamera(
+        75,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        1000
+      );
+      camera.position.set(0, 0, 100);
+
+      // 创建渲染器
+      const renderer = new THREE.WebGLRenderer();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(renderer.domElement);
+
+      // 创建粒子系统
+      const particleCount = 10000;
+      const positions = new Float32Array(particleCount * 3);
+      const pMaterial = new THREE.PointsMaterial({
+        color: 0xffffff,
+        size: 2,
+      });
+
+      // 创建粒子
+      for (let i = 0; i < positions.length; i += 3) {
+        const x = Math.random() * 200 - 100;
+        const y = Math.random() * 200 - 100;
+        const z = Math.random() * 200 - 100;
+        positions[i] = x;
+        positions[i + 1] = y;
+        positions[i + 2] = z;
+      }
+
+      const particleSystem = new THREE.Points(
+        new THREE.BufferGeometry().setAttribute(
+          "position",
+          new THREE.BufferAttribute(positions, 3)
+        ),
+        pMaterial
+      );
+      scene.add(particleSystem);
+
+      // 创建鼠标控制器
+      const controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+      // 渲染场景
+      function render() {
+        requestAnimationFrame(render);
+        particleSystem.rotation.y += 0.001;
+        renderer.render(scene, camera);
+      }
+
+      render();
+    </script>
+  </body>
+</html>
